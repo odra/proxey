@@ -1,0 +1,14 @@
+{
+  "name": "proxey",
+  "version": "0.2.0",
+  "description": "Enables frontend developers to run their webapps in a nodejs proxy without worrying about cors or creating server side coding",
+  "main": "./proxey.js",
+  "keywords": [
+    "webapp",
+    "server",
+    "webapp server",
+    "node proxy server"
+  ],
+  "author": "Leonardo Rossetti",
+  "license": "MIT"
+}
