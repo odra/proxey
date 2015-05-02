@@ -34,8 +34,9 @@ server.run({
 	routes: {
 		'/': 'home.html',
 		'/users': 'users.html',
-		'/api/users': 'users.json'
-	}
+		'/api/users',: 'users.json'
+	},
+	charset: 'utf-8'
 });
 ```
 
