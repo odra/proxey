@@ -14,6 +14,7 @@ function Proxey() {
 	this.vars = {};
 	this.routes = {};
 	this.debug = true;
+	this.charset = 'utf-8'
 }
 
 Proxey.prototype.getRoute = function (path) {
@@ -47,6 +48,9 @@ Proxey.prototype.setConfig = function (config) {
 		if (!this.routes['/']) {
 			this.routes['/'] = this.rootDocument;
 		}
+	}
+	if (config.charset) {
+		this.charset = config.charset;
 	}
 };
 
@@ -116,6 +120,7 @@ Proxey.prototype.run = function (config) {
 			if (mime === undefined) {
 				mime = 'text/html';
 			}
+			mime += ';charset=' + top.charset;
 			res.writeHead(200, {'Content-Type': mime});
 			res.end(documentFile);
 		} else if (req.url.match(new RegExp(proxyUrlPattern,'g'))) {

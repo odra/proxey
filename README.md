@@ -15,8 +15,9 @@ How to Use
 - rootDocument: document to be rendered as the main html;
 - port: port to run, default is 5000 (optional);
 - vars: a json containing additional headers to be sent in each proxy request (optional);
-- proxyUrl: a path to be used as the proxy url to send json requests, default is "/proxy" (optional)
-- routes: a json containing a path and its relative html view file to render. If the '/' route is not set, it will use the rootDocument prop (default index.html) as the default view file.
+- proxyUrl: a path to be used as the proxy url to send json requests, default is "/proxy" (optional);
+- routes: a json containing a path and its relative html view file to render. If the '/' route is not set, it will use the rootDocument prop (default index.html) as the default view file;
+- charset: the charset to be used in the proxy responses, default is "utf-8".
 
 Sample with routes:
 
