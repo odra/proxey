@@ -1,6 +1,6 @@
 {
   "name": "proxey",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Enables frontend developers to run their webapps in a nodejs proxy without worrying about cors or creating server side coding",
   "main": "./proxey.js",
   "keywords": [
@@ -12,11 +12,11 @@
   "author": "Leonardo Rossetti",
   "license": "MIT",
   "bugs": {
-    "url" : "https://github.com/Goldark/proxey/issues",
+    "url" : "https://github.com/sumatraio/proxey/issues",
     "email" : "leonardo@goldark.com.br"
   },
   "repository" :{
     "type" : "git",
-    "url" : "https://github.com/Goldark/proxey"
+    "url" : "https://github.com/sumatraio/proxey"
   }
 }

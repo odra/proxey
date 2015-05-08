@@ -556,6 +556,7 @@
     "application/scvp-cv-response": "scs",
     "application/sdp": "sdp",
     "text/x-setext": "etx",
+    "text/xml": "xml",
     "video/x-sgi-movie": "movie",
     "application/vnd.shana.informed.formdata": "ifm",
     "application/vnd.shana.informed.formtemplate": "itp",
