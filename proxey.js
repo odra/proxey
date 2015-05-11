@@ -81,9 +81,21 @@ Proxey.prototype.request = function (req, res) {
 	delete options.headers['host'];
 
 	for (var _var in this.vars) {
-		options.headers[_var] = this.vars[_var];
+		var key = _var;
+		var value = this.vars[_var];
+		if (typeof value == 'string') {
+			options.headers[key] = value;
+		} else if (typeof value == 'object') {
+			if (options.headers[key] !== undefined && options.headers[key].replace(/\_/gim, '') == key) {
+				var real = value.real || key;
+				options.headers[real] = value.value;
+				if (value.real) {
+					delete options.headers[key];
+				}
+			}
+		}
 	}
-
+	
 	var proxy = http.request(options, function (response) {
 		response.setEncoding('utf8');
 		response.on('data', function (chunk) {
@@ -123,11 +135,15 @@ Proxey.prototype.run = function (config) {
 			mime += ';charset=' + top.charset;
 			res.writeHead(200, {'Content-Type': mime});
 			res.end(documentFile);
-		} else if (req.url.match(new RegExp(proxyUrlPattern,'g'))) {
-			this.request(req, res);
+		} else if (req.url.match(new RegExp(proxyUrlPattern, 'g'))) {
+			top.request(req, res);
 		} else {
 			try {
+				var resource = req.url;
+				var resourceFileMimetype = resource.match(/\.[0-9a-z]+$/i);
+				var mime = mimetype.get(resourceFileMimetype[0].replace('.', ''));
 				var resourceFile = fs.readFileSync(top.rootFolder + req.url);
+				res.writeHead(200, {'Content-Type': mime});
 				res.end(resourceFile);
 			} catch (e) {
 				res.writeHead(404);
