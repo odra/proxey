@@ -20,6 +20,7 @@ How to Use
 - proxyUrl: a path to be used as the proxy url to send json requests, default is "/proxy" (optional);
 - routes: a json containing a path and its relative html view file to render. If the '/' route is not set, it will use the rootDocument prop (default index.html) as the default view file;
 - charset: the charset to be used in the proxy responses, default is "utf-8".
+- proxy: a json containg static proxy key:value url. It will detect every request sent to the "key" url to the "value" url.
 
 Sample with routes:
 
@@ -74,6 +75,25 @@ server.run({
 			'real': 'X-Whatever' //proxy will use this header name,
 			'value': 'header-value'
 		}
+	}
+});
+```
+
+Sample with json proxy:
+
+```js
+var server = require('proxey');
+
+server.run({
+	rootFolder: './app',
+	rootDocument: 'index.html',
+	port: 5000,
+	proxy: {
+		"/api": "http://api.server.com", // /api/users will become http://api.server.com/users
+		"/dev-api": "http://api.dev.server.com", // /dev-api/data will become http://api.dev.server.com/data
+	},
+	vars: {
+		'X-Api-Token': '12345'
 	}
 });
 ```

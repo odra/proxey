@@ -15,6 +15,7 @@ function Proxey() {
 	this.routes = {};
 	this.debug = true;
 	this.charset = 'utf-8'
+	this.proxy = null;
 }
 
 Proxey.prototype.getRoute = function (path) {
@@ -33,6 +34,9 @@ Proxey.prototype.setConfig = function (config) {
 	}
 	if (config.proxyUrl) {
 		this.proxyUrl = config.proxyUrl;
+	}
+	if (config.proxy) {
+		this.proxy = config.proxy;
 	}
 	if (config.rootFolder) {
 		this.rootFolder = config.rootFolder;
@@ -54,18 +58,29 @@ Proxey.prototype.setConfig = function (config) {
 	}
 };
 
-Proxey.prototype.request = function (req, res) {
-	var splitedUrl = req.url.split(this.proxyUrl + '?url=');
-	var proxyUrl = '';
-
-	for (var i = 1; i < splitedUrl.length; i++) {
-		proxyUrl += splitedUrl[i]
+Proxey.prototype.request = function (req, res, config) {
+	var joinSplitedUrl = function (arr) {
+		for (var i = 1; i < arr.length; i++) {
+			proxyUrl += arr[i];
+		}
 	}
 
-	if (splitedUrl.length < 2) {
-		res.writeHead(400);
-		res.end('GET: ' + req.url + 'INVALID PROXY URL(400)');
-		return;
+	var splitedUrl;
+	var proxyUrl = '';
+
+	if (config) {
+		splitedUrl = req.url.split(config.key);
+		proxyUrl = config.value;
+		joinSplitedUrl(splitedUrl);
+	} else {
+		splitedUrl = req.url.split(this.proxyUrl + '?url=');
+		joinSplitedUrl(splitedUrl);
+
+		if (splitedUrl.length < 2) {
+			res.writeHead(400);
+			res.end('GET: ' + req.url + 'INVALID PROXY URL(400)');
+			return;
+		}
 	}
 
 	var parsedUrl = url.parse(decodeURIComponent(proxyUrl));
@@ -118,6 +133,17 @@ Proxey.prototype.run = function (config) {
 	var top = this;
 	this.setConfig(config);
 	this.instance = http.createServer(function (req, res) {
+		var isProxyUrl = function (url) {
+			if (!top.proxy) {
+				return false;
+			}
+			for (var item in top.proxy) {
+				if (req.url.indexOf(item) === 0) {
+					return true;
+				}
+			}
+			return false;
+		}
 		var proxyUrlPattern = '^' + top.proxyUrl;
 		var template = top.getRoute(req.url);
 		if (template) {
@@ -137,6 +163,12 @@ Proxey.prototype.run = function (config) {
 			res.end(documentFile);
 		} else if (req.url.match(new RegExp(proxyUrlPattern, 'g'))) {
 			top.request(req, res);
+		} else if (isProxyUrl(req.url)) {
+			for (var item in top.proxy) {
+				if (req.url.indexOf(item) === 0) {
+					top.request(req, res, {key: item, value: top.proxy[item]});
+				}
+			}
 		} else {
 			try {
 				var resource = req.url;
