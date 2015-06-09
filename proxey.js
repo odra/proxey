@@ -122,8 +122,15 @@ Proxey.prototype.request = function (req, res, config) {
 		});
 	});
 
-	if (req.body) {
-		proxy.write(req.body);
+	if (req.method == 'PUT' || req.method == 'POST') {
+		var requestData = '';
+		req.on('data', function(chunk) {
+			requestData += chunk;
+		});
+		req.on('end', function() {
+			proxy.write(requestData);
+			proxy.end();
+	    });
 	}
 
 	proxy.end();
@@ -172,12 +179,20 @@ Proxey.prototype.run = function (config) {
 		} else {
 			try {
 				var resource = req.url;
+				if (resource.indexOf('?') != -1) {
+					resource = resource.split('?')[0];
+				}
+				if (resource.indexOf('#') != -1) {
+					resource = resource.split('#')[0];
+				}
 				var resourceFileMimetype = resource.match(/\.[0-9a-z]+$/i);
-				var mime = mimetype.get(resourceFileMimetype[0].replace('.', ''));
-				var resourceFile = fs.readFileSync(top.rootFolder + req.url);
+				resourceFileMimetype = resourceFileMimetype[0].replace('.', '');
+				var mime = mimetype.get(resourceFileMimetype);
+				var resourceFile = fs.readFileSync(top.rootFolder + resource);
 				res.writeHead(200, {'Content-Type': mime});
 				res.end(resourceFile);
 			} catch (e) {
+				console.log(e);
 				res.writeHead(404);
 				res.end('GET: ' + req.url + 'NOT FOUND(404)');
 			}
