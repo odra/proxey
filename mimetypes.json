@@ -1,4 +1,6 @@
 {
+    "application/font-woff": "woft",
+     "application/font-woff2": "woft2",
     "text/vnd.wap.wmlscript": "wmls",
     "application/cu-seeme": "cu",
     "application/vnd.mobius.plc": "plc",
